@@ -1,0 +1,29 @@
+{
+  "name": "prism",
+  "version": "0.0.1",
+  "description": "Underlying Game Engine for the OpenFantasy Project",
+  "author": {
+    "name": "KKonaOG",
+    "email": "kkonaog@fanet.dev",
+    "url": "https://github.com/kkonaog"
+  },
+  "contributors": [],
+  "private": true,
+  "keywords": [],
+  "homepage": "https://github.com/Open-Fantasy/Prism",
+  "bugs": {
+    "url": "https://github.com/Open-Fantasy/Prism/issues"
+  },
+  "license": "TODO",
+  "module": "src/Prism.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "compile": "tsc --emitDeclarationOnly --isolatedDeclarations && bun build src/Prism.ts --outdir build/"
+  }
+}
