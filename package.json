@@ -31,7 +31,10 @@
     "lint": "biome lint",
     "lint:apply": "biome lint --write",
     "format": "biome format",
-    "format:apply": "biome format --write"
+    "format:apply": "biome format --write",
+    "npm:package": "bun run npm:version patch && bun run npm:publish",
+    "npm:version": "bunx npm version",
+    "npm:publish": "bun publish"
   },
   "trustedDependencies": [
     "@biomejs/biome"
