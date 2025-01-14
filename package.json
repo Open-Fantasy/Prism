@@ -1,29 +1,38 @@
 {
-  "name": "prism",
-  "version": "0.0.1",
-  "description": "Underlying Game Engine for the OpenFantasy Project",
-  "author": {
-    "name": "KKonaOG",
-    "email": "kkonaog@fanet.dev",
-    "url": "https://github.com/kkonaog"
-  },
-  "contributors": [],
-  "private": true,
-  "keywords": [],
+  "name": "prism-engine",
+  "sideEffects": false,
+  "version": "0.0.4",
+  "description": "Game Engine for the OpenFantasy Project",
+  "author": "https://github.com/Open-Fantasy/Prism/graphs/contributors",
   "homepage": "https://github.com/Open-Fantasy/Prism",
+  "main": "build/Prism.js",
+  "types": "build/Prism.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Open-Fantasy/Prism/"
+  },
   "bugs": {
     "url": "https://github.com/Open-Fantasy/Prism/issues"
   },
-  "license": "TODO",
-  "module": "src/Prism.ts",
-  "type": "module",
+  "files": ["build/"],
+  "license": "MIT",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@biomejs/biome": "1.9.4",
+    "@types/bun": "latest",
+    "bun-plugin-dts": "^0.3.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.7.3"
   },
   "scripts": {
-    "compile": "tsc --emitDeclarationOnly --isolatedDeclarations && bun build src/Prism.ts --outdir build/"
+    "bundle": "bun run build.ts",
+    "lint": "biome lint",
+    "lint:apply": "biome lint --write",
+    "format": "biome format",
+    "format:apply": "biome format --write"
+  },
+  "trustedDependencies": ["@biomejs/biome"],
+  "dependencies": {
+    "@tsconfig/bun": "^1.0.7"
   }
 }
