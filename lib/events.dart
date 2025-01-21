@@ -1,4 +1,4 @@
-import 'package:prism/event_hub.dart' show Event;
+import 'package:prism_engine/event_hub.dart' show Event;
 
 class EngineTickEventData {
   double delta = 0.0;
