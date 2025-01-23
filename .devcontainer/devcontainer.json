@@ -1,21 +1,16 @@
 {
-  "name": "Prism Development Container",
-  "image": "dart:stable",
-  "postAttachCommand": "dart --disable-analytics",
-
-  "customizations": {
-    "vscode": {
-      "extensions": ["Dart-Code.dart-code"],
-      "settings": {
-        "[dart]": {
-          "editor.formatOnSave": true,
-          "editor.formatOnType": true,
-          "editor.rulers": [80],
-          "editor.selectionHighlight": false,
-          "editor.tabCompletion": "onlySnippets",
-          "editor.wordBasedSuggestions": "off"
-        }
+    "name": "prism",
+    "dockerFile": "../.docker/Dockerfile",
+    "context": ".",
+    "mounts": [
+      "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "streetsidesoftware.code-spell-checker",
+          "biomejs.biome"
+        ]
       }
     }
-  }
 }

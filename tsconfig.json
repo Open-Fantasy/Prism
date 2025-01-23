@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true, // See ref: https://www.typescriptlang.org/tsconfig/#exactOptionalPropertyTypes
+    "noFallthroughCasesInSwitch": true, // Enforces that each case in a switch has either a break, return, or throw
+    "noImplicitAny": true, // We want as verbose type-checking as possible so we enforce no implicit anys
+    "noImplicitOverride": true, // Overridden functions should be explicitly defined override
+    "noImplicitReturns": true, // Returns should be explicit for best code readability
+    "noImplicitThis": true, // Enforce utilization of the "this" keyword to prevent confusion on variable scopes
+    "noUnusedLocals": false, // Enable to trigger checks for unused variables
+    "noUnusedParameters": false, // Enable to trigger checks for unused parameters
+    "strict": true, // See ref: https://www.typescriptlang.org/tsconfig/#strict
+    "strictBindCallApply": true, // Enforces correct variable type for arguments used in binding, calling, and applying of a function
+    "strictBuiltinIteratorReturn": true, // Built-in iterators are instantiated with a `TReturn` type of undefined instead of `any`.
+    "strictFunctionTypes": true, // See ref: https://www.typescriptlang.org/tsconfig/#strictFunctionTypes
+    "strictNullChecks": true, // Enforces null/undefined variable checking
+    "strictPropertyInitialization": true, // Requires all class properties to be initialized in the constructor or in the definition
+    "useUnknownInCatchVariables": true, // See ref: https://www.typescriptlang.org/tsconfig/#useUnknownInCatchVariables
+    // Look into: noPropertyAccessFromIndexSignature, noUncheckedIndexedAccess
+
+    // Modules
+    "allowImportingTsExtensions": true, // Allow imports with *.ts (and related) extensions
+    "allowUmdGlobalAccess": false, // See ref: https://www.typescriptlang.org/tsconfig/#allowUmdGlobalAccess
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noResolve": false,
+    "noUncheckedSideEffectImports": true,
+    "resolveJsonModule": true, // Allows resolving .json files into objects
+    "resolvePackageJsonExports": true, // Defaults to true in bundler mode
+    "resolvePackageJsonImports": true, // Defaults to true in bundler mode
+    // Look into: allowArbitraryExtensions, baseUrl, customConditions, moduleSuffixes, paths, rootDir, rootDirs, typeRoots, types
+
+    // Emit
+    "downlevelIteration": true, // See ref: https://www.typescriptlang.org/tsconfig/#downlevelIteration
+    "importHelpers": true, // Related to "downlevelIteration". See ref: https://www.typescriptlang.org/tsconfig/#downlevelIteration
+    "newLine": "lf", // Emits linux-style new lines
+    "noEmit": true, // Bun handles typescript conversion
+    "noEmitOnError": true, // Fix errors before resolving to .ts
+    "outDir": "dist/",
+    // Look into: declaration, declarationDir, declarationMap, emitBOM,  emitDeclarationOnly, inlineSourceMap, inlineSources, mapRoot, newLine, noEmitHelpers, preserveConstEnums, removeComments, sourceMap, sourceRoot, stripInternal,
+
+    // JavaScript Support
+    "allowJs": true, // Allow javascript to be included in the project
+    "checkJs": false, // We will not parse javascript for errors
+    "maxNodeModuleJsDepth": 0, // Likely leave default. See ref: https://www.typescriptlang.org/tsconfig/#maxNodeModuleJsDepth
+    // Look into: disableSizeLimit, plugins,
+
+    // Interop Constraints
+    "allowSyntheticDefaultImports": true, // See ref: https://www.typescriptlang.org/tsconfig/#maxNodeModuleJsDepth
+    "forceConsistentCasingInFileNames": true, // Make sure developers import using the correct capitalization of the file
+    "verbatimModuleSyntax": true,
+    // Look into: esModuleInterop, isolatedDeclarations, isolatedModules, preserveSymlinks
+
+    // Language and Environment
+    "jsx": "react-jsx", // Emits .js files with JSX changed to _jsx calls for production environments
+    "lib": ["ESNext", "DOM", "WebWorker"], // Adds API definitions. See ref: https://www.typescriptlang.org/tsconfig/#lib
+    "moduleDetection": "force",
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    // Look into: emitDecoratorMetadata, experimentalDecorators, jsxFactory, jsxFragmentFactory, jsxImportSource, noLib, reactNamespace
+
+    // Compiler Diagnostics
+    "diagnostics": false,
+    "explainFiles": false,
+    "extendedDiagnostics": false,
+    // Look into: generateCpuProfile, generateTrace, listEmittedFiles, listFiles, noCheck, traceResolution
+
+    // Projects
+    // Look into: composite, disableReferencedProjectLoad, disableSolutionSearching, disableSourceOfProjectReferenceRedirect, incremental, tsBuildInfoFile
+
+    // Output Formatting
+    "noErrorTruncation": true, // This is likely preferential
+    "pretty": true,
+    // Look into: preserveWatchOutput
+
+    // Completeness
+    "skipLibCheck": true,
+
+    // Watch Options
+    "assumeChangesOnlyAffectDirectDependencies": false
+  }
+}
