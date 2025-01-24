@@ -18,7 +18,8 @@
     "strictNullChecks": true, // Enforces null/undefined variable checking
     "strictPropertyInitialization": true, // Requires all class properties to be initialized in the constructor or in the definition
     "useUnknownInCatchVariables": true, // See ref: https://www.typescriptlang.org/tsconfig/#useUnknownInCatchVariables
-    // Look into: noPropertyAccessFromIndexSignature, noUncheckedIndexedAccess
+    "noPropertyAccessFromIndexSignature": false,
+    //, noUncheckedIndexedAccess
 
     // Modules
     "allowImportingTsExtensions": true, // Allow imports with *.ts (and related) extensions
@@ -79,6 +80,6 @@
     "skipLibCheck": true,
 
     // Watch Options
-    "assumeChangesOnlyAffectDirectDependencies": false
+    "assumeChangesOnlyAffectDirectDependencies": false,
   }
 }

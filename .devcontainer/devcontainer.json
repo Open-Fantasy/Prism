@@ -1,16 +1,15 @@
 {
-    "name": "prism",
-    "dockerFile": "../.docker/Dockerfile",
-    "context": ".",
-    "mounts": [
-      "source=${localWorkspaceFolder},target=/workspace,type=bind"
-    ],
-    "customizations": {
+  "name": "Prism",
+  "image": "oven/bun:latest",
+  "updateRemoteUserUID": true,
+  "features": {
+      "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
       "vscode": {
-        "extensions": [
-          "streetsidesoftware.code-spell-checker",
-          "biomejs.biome"
-        ]
+          "extensions": [
+              "oven.bun-vscode"
+          ]
       }
-    }
+  }
 }
