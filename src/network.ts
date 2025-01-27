@@ -68,14 +68,16 @@ export class Network {
             console.log(err);
         });
 
-        this._socket.on('disconnect', (_) => {
+        this._socket.on('disconnect', (msg) => {
             this._networkStatus = NetworkStatus.disconnected;
             console.log(`Disconnected from server`);
+            console.log(msg);
         });
 
-        this._socket.on('reconnecting', (_) => {
+        this._socket.on('reconnecting', (msg) => {
             this._networkStatus = NetworkStatus.reconnecting;
             console.log(`Reconnecting to server`);
+            console.log(msg);
         });
 
         this._socket.onAny((event, data) => {
@@ -114,7 +116,7 @@ export class Network {
             return
         }
 
-        if (this._messageQueue.length > EXCESSIVE_MESSAGE_QUEUE_SIZE || this._priorityMessageQueue.length > EXCESSIVE_MESSAGE_QUEUE_SIZE) {
+        if (this._messageQueue.length + this._priorityMessageQueue.length > EXCESSIVE_MESSAGE_QUEUE_SIZE) {
             console.log(`Excessive message queue size, dropping messages. Current delta: ${delta} `);
             this._messageQueue = new Array<NetworkMessage>;
             this._priorityMessageQueue = new Array<NetworkMessage>;

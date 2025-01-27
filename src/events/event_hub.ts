@@ -48,9 +48,11 @@ export class EventHub {
         /* check if topic exists */
         for (let topicKey in this._topics) {
             let topic = this._topics[topicKey];
-            let newSubscriber = new Subscriber<TEvent>(topic, callback);
-            topic.addSubscriber(newSubscriber);
-            return newSubscriber;
+            if (topicName == topic.name) {
+                let newSubscriber = new Subscriber<TEvent>(topic, callback);
+                topic.addSubscriber(newSubscriber);
+                return newSubscriber;
+            }
         } 
 
         /* create new topic if needed */

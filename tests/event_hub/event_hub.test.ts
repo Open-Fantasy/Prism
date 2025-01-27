@@ -38,4 +38,20 @@ describe("EventHub Tests", () => {
         expect(eventHub.topics[0].subscribers.length).toBe(2);
         expect(subscriberA).not.toBe(subscriberB);
     });
+
+    it("multiple topics can be made though advertise", () => {
+        let topicNameA = "topicNameA";
+        let topicNameB = "topicNameB";
+        eventHub.advertise(topicNameA);
+        eventHub.advertise(topicNameB);
+        expect(eventHub.topics.length).toBe(2);
+    });
+
+    it("multiple topics can be made though subscribe", () => {
+        let topicNameA = "topicNameA";
+        let topicNameB = "topicNameB";
+        eventHub.subscribe(topicNameA, (_)=> {});
+        eventHub.subscribe(topicNameB, (_)=> {});
+        expect(eventHub.topics.length).toBe(2);
+    });
 })
