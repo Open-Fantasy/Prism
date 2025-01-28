@@ -1,6 +1,8 @@
+import { bundlerModuleNameResolver } from "typescript";
 import { EventHub } from "./events/event_hub";
 import { Network } from "./network";
-import { sleepSync } from "bun";
+import { RuntimeStats } from "./runtimeStats"
+import { sleep } from "bun";
 
 /* tick rate in ticks per second */
 const LOGIC_FREQ = 30;
@@ -12,16 +14,18 @@ const RENDER_TICK_TIME = Math.floor((1 / RENDER_FREQ) * 1000);
 const FASTER_TICK_TIME = LOGIC_TICK_TIME > RENDER_TICK_TIME ? RENDER_TICK_TIME : LOGIC_TICK_TIME;
 
 const TICK_GRACE_THRESHOLD = 1.05;  // the amount of grace a tick should get for triggering i.e trigger the tick within 5% of the target rate
-const TICK_WARNING_THRESHOLD = 1.1; // the amount a tick is allowed go over its target rate before printing a warning
+const TICK_WARNING_THRESHOLD = 1.25; // the amount a tick is allowed go over its target rate before printing a warning
 
 /**
  * settings for the prism engine on init
  * @field enableNetwork - if false then network will not be started, true to start network
  * @field networkServer - server for network to connect to
  */
-class PrismSettings {
+export class PrismSettings {
     enableNetwork: boolean = false;
     networkServer: string = "";
+    gatherStats: boolean = false;
+    cliMode: boolean = false;
 }
 
 /**
@@ -45,6 +49,7 @@ class TickInfo {
     }
 }
 
+
 /**
  * Main object for the engine. This is what you create in the client
  * initializes everything according to its settings and starts the gameLoop
@@ -52,11 +57,13 @@ class TickInfo {
 class Prism {
     settings: PrismSettings;
     enabled: boolean = false;
+    runtimeStats: RuntimeStats = new RuntimeStats();
     readonly network: Network = new Network();
     readonly prismEvents: EventHub = new EventHub();
 
     constructor(settings: PrismSettings) {
         this.settings = settings;
+        this.runtimeStats.runtimeStatsCliInit(this.settings);
     }
 
     /**
@@ -84,13 +91,13 @@ class Prism {
      * - Checks if there is time left before triggering the next update (this should be true) and sleeps that amount of time
      * - Loop
      */
-    gameLoop() {
+    async gameLoop() {
         let logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
         let renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
         let lastTickTime = 0;
         while (this.enabled) {
             let curTime: number = Date.now();
-            sleepSync(10);
+            await sleep(10); // TEST LOAD REMOVE IN PROD
             this.checkForTick(lastTickTime, logicTickInfo, this);
             this.checkForTick(lastTickTime, renderTickInfo, this);
 
@@ -98,7 +105,7 @@ class Prism {
             let loopDiff = Date.now() - curTime;
             let sleepTime = FASTER_TICK_TIME - loopDiff;
             if (sleepTime > 0)
-                sleepSync(sleepTime);
+                await sleep(sleepTime);
             let afterSleepDiff = Date.now() - curTime;
             lastTickTime = afterSleepDiff;
         }
@@ -127,6 +134,8 @@ class Prism {
     logicTick(prism: Prism, delta: number) {
         if (delta > LOGIC_TICK_TIME * TICK_WARNING_THRESHOLD)
             console.log(`Logic Loop running slow\t\tShould be: ${LOGIC_TICK_TIME}\tLast tick took: ${delta}`);
+        if (prism.settings.gatherStats)
+            prism.runtimeStats.updateLogic(delta);
         if (prism.settings.enableNetwork)
             prism.network.update(delta);
         prism.prismEvents.advertise("logicTick").publish(delta);
@@ -140,13 +149,18 @@ class Prism {
     renderTick(prism: Prism, delta: number) {
         if (delta > RENDER_TICK_TIME * TICK_WARNING_THRESHOLD)
             console.log(`Render loop running slow\tShould be: ${RENDER_TICK_TIME}\tLast tick took: ${delta}`);
+        if (prism.settings.gatherStats)
+            prism.runtimeStats.updateRender(delta);
         prism.prismEvents.advertise("renderTick").publish(delta);
     }
 }
 
+/* random test setup */
 let settings = new PrismSettings();
 settings.enableNetwork = false;
+settings.gatherStats = true;
+settings.cliMode = Bun.argv.some(arg => arg.includes("cliMode"));
 let prism = new Prism(settings);
-prism.prismEvents.subscribe("logicTick", (delta: number) => {console.log(`logicTick: ${delta}`)});
-prism.prismEvents.subscribe("renderTick", (delta: number) => {console.log(`renderTick: ${delta}`)});
+//prism.prismEvents.subscribe("logicTick", (delta: number) => {console.log(`logicTick: ${delta}`)});
+//prism.prismEvents.subscribe("renderTick", (delta: number) => {console.log(`renderTick: ${delta}`)});
 prism.start();

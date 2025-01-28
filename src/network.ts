@@ -1,4 +1,4 @@
-import { io, Socket, type ManagerOptions } from "../node_modules/socket.io-client/build/esm/index";
+import { io, Socket } from "../node_modules/socket.io-client/build/esm/index"
 import { PrismEvent, type EventCallback } from "./events/event";
 import { EventHub } from "./events/event_hub";
 

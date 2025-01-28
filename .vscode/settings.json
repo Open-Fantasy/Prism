@@ -3,5 +3,8 @@
     "cSpell.words": [
         "buildable",
         "gamestate"
+    ],
+    "terminal.integrated.commandsToSkipShell": [
+        "-workbench.action.quickOpen" //needed because ctrl-p is used to print runtime stats
     ]
 }
