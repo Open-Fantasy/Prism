@@ -1,7 +1,16 @@
 {
   "name": "prism",
-  "module": "prism.ts",
+  "version": "0.0.1",
+  "description": "Prism Engine",
+  "module": "prism",
+  "files": [
+    "build/"
+  ],
   "type": "module",
+  "exports": {
+    "types": "./build/prism.d.ts",
+    "import": "./build/dev/prism.js"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -18,6 +27,7 @@
 
   "scripts": {
     "debug":  "bun run --inspect src/prism --cliMode",
-    "cliDev": "bun run src/prism --cliMode"
+    "cliDev": "bun run src/prism --cliMode",
+    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife"
   }
 }

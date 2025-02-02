@@ -37,9 +37,13 @@
     "downlevelIteration": true, // See ref: https://www.typescriptlang.org/tsconfig/#downlevelIteration
     "importHelpers": true, // Related to "downlevelIteration". See ref: https://www.typescriptlang.org/tsconfig/#downlevelIteration
     "newLine": "lf", // Emits linux-style new lines
-    "noEmit": true, // Bun handles typescript conversion
+    "noEmit": false, // Bun handles typescript conversion
     "noEmitOnError": true, // Fix errors before resolving to .ts
-    "outDir": "dist/",
+    "outDir": "build/",
+    "outFile": "build/prism.d.ts",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
     // Look into: declaration, declarationDir, declarationMap, emitBOM,  emitDeclarationOnly, inlineSourceMap, inlineSources, mapRoot, newLine, noEmitHelpers, preserveConstEnums, removeComments, sourceMap, sourceRoot, stripInternal,
 
     // JavaScript Support
@@ -51,7 +55,8 @@
     // Interop Constraints
     "allowSyntheticDefaultImports": true, // See ref: https://www.typescriptlang.org/tsconfig/#maxNodeModuleJsDepth
     "forceConsistentCasingInFileNames": true, // Make sure developers import using the correct capitalization of the file
-    "verbatimModuleSyntax": true,
+    //"verbatimModuleSyntax": true,
+    "esModuleInterop": true,
     // Look into: esModuleInterop, isolatedDeclarations, isolatedModules, preserveSymlinks
 
     // Language and Environment

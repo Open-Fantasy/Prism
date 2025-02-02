@@ -143,7 +143,7 @@ export class Network {
      * @param immediate send the message out immediately
      * @returns false network is not connected, true otherwise
      */
-    publishNet (msg: NetworkMessage, priority: boolean, immediate: boolean): boolean {
+    publishNet (msg: NetworkMessage, priority: boolean = false, immediate: boolean = false): boolean {
         if (this.networkStatus != NetworkStatus.connected) {
             console.log("Network not connected, message dropped.");
             return false;
@@ -172,5 +172,13 @@ export class Network {
      */
     subscribeNet<TEvent> (topicName: string, callback: EventCallback<TEvent>) {
         return this._netEventHub.subscribe(topicName, callback);
+    }
+
+    /**
+     * compatibility layer might remove later
+     */
+    sendMessage(verb: string, data: unknown) {
+        let msg = new NetworkMessage(verb, data);
+        this.publishNet(msg);
     }
 }

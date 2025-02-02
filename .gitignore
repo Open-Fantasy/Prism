@@ -1,5 +1,6 @@
 # Ignore Build
 build/
+tests/browser_test/prism.js
 
 .vscode/
 
