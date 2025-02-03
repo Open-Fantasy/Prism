@@ -31,13 +31,15 @@
     "@tsconfig/bun": "^1.0.7",
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
+    "@types/three": "^0.173.0",
     "bun-types": "^1.2.0",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "typescript-eslint": "^8.23.0"
+    "typescript-eslint": "^8.23.0",
+    "three": "^0.173.0"
   },
   "scripts": {
     "bundle:debug:cjs": "bun build --outdir=./build/cjs/ --sourcemap=external --format=cjs ./src/index.ts",
@@ -51,6 +53,7 @@
     "debug": "bun run --inspect src/prism --cliMode",
     "cliDev": "bun run src/prism --cliMode",
     "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife",
-    "serve": "bun run tests/test_utils/htmlserver/server.ts"
+    "serve": "bun run tests/test_utils/htmlserver/server.ts",
+    "uiTest": "bun build tests/ui_test/ui_test.ts --outfile=tests/ui_test/ui_test.js --target=browser --format iife"
   }
 }
