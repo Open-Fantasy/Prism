@@ -20,14 +20,16 @@
   "dependencies": {
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
+    "@types/three": "^0.173.0",
     "bun-types": "^1.2.0",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "three": "^0.173.0"
   },
-
   "scripts": {
-    "debug":  "bun run --inspect src/prism --cliMode",
+    "debug": "bun run --inspect src/prism --cliMode",
     "cliDev": "bun run src/prism --cliMode",
-    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife"
+    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife",
+    "uiTest": "bun build tests/ui_test/ui_test.ts --outfile=tests/ui_test/ui_test.js --target=browser --format iife"
   }
 }

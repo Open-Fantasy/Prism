@@ -1,5 +1,7 @@
+import { NumberNodeUniform } from "three/src/renderers/common/nodes/NodeUniform.js";
 import { EventHub } from "./events/event_hub";
 import { Network } from "./network";
+import {Renderer} from "./renderer/renderer";
 import { RuntimeStats } from "./runtimeStats"
 
 /* tick rate in ticks per second */
@@ -24,6 +26,7 @@ export class PrismSettings {
     networkServer: string = "";
     gatherStats: boolean = false;
     cliMode: boolean = false;
+    windowDim: {width: number, height: number} = {width: 0, height: 0};
 }
 
 /**
@@ -58,6 +61,7 @@ export class Prism {
     runtimeStats: RuntimeStats = new RuntimeStats();
     readonly network: Network = new Network();
     readonly prismEvents: EventHub = new EventHub();
+    readonly renderer: Renderer = new Renderer();
 
     constructor(settings: PrismSettings) {
         this.settings = settings;
@@ -72,6 +76,7 @@ export class Prism {
         if (this.settings.enableNetwork) {
             this.network.start(this.settings.networkServer);
         }
+        this.renderer.init(this.settings.windowDim, 45);
         let logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
         let renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
         this.gameLoop(logicTickInfo, renderTickInfo);
@@ -156,6 +161,7 @@ export class Prism {
             console.log(`Render loop running slow\tShould be: ${RENDER_TICK_TIME}\tLast tick took: ${delta}`);
         if (prism.settings.gatherStats)
             prism.runtimeStats.updateRender(delta);
+        prism.renderer.renderFrame();
         prism.prismEvents.advertise("renderTick").publish(delta);
     }
 }

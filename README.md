@@ -16,7 +16,7 @@ There is a simple socket.io echo server run with `bun run tests/test_utils/echos
 
 ### Browser Testing
 `bun run browserTest`. This will build prism to `tests/browser_test/prism.js`. Open the index.html file in that directory to load the file.
-
+    
 ## Flags
 - `--cliMode`: allow for a type of command line interrupt for testing and debugging purposes. i.e `ctrl-p` will print the runtime stats if their collection is enabled. See full list below. NOTE: while this works with the bun builtin debugger it does not work for the vsCode debugger.
 
