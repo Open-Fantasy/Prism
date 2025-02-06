@@ -1,5 +1,5 @@
 # Prism
-
+![image](https://github.com/user-attachments/assets/644532bc-4bcb-47d6-ae0f-78f5630e5e42)
 ## Dev Env
 We recommend using VSCode as a development env. This is packaged with various workplace settings to aid in development. If not using VScode please take note of any sections in the readme for manual env setup.
 
