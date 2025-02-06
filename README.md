@@ -1,4 +1,5 @@
-![PrismLogo](https://github.com/user-attachments/assets/586b3ec6-3b9b-4bb3-9897-e5edc51d2c1b =250x250)
+<p align="center"><img src="https://github.com/user-attachments/assets/586b3ec6-3b9b-4bb3-9897-e5edc51d2c1b" width="420px"/></p>
+
 ## Dev Env
 We recommend using VSCode as a development env. This is packaged with various workplace settings to aid in development. If not using VScode please take note of any sections in the readme for manual env setup.
 
