@@ -1,6 +1,8 @@
 <p align="center"><img src="https://github.com/user-attachments/assets/586b3ec6-3b9b-4bb3-9897-e5edc51d2c1b" width="420px"/></p>
 
 <p align="center">
+  <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Open-Fantasy/Prism">
+  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Open-Fantasy/Prism/bun-test.yml?label=Unit%20Tests">
   <img alt="GitHub License" src="https://img.shields.io/github/license/Open-Fantasy/Prism">
 </p>
 
