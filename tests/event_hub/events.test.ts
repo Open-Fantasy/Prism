@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { PrismEvent } from "../../src/events/event";
+import { PrismEvent } from "prism-engine";
 
 class TestEvent extends PrismEvent<{x: {y: number}}>{};
 
