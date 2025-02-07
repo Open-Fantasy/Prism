@@ -1,5 +1,5 @@
 import {describe, it, expect, beforeEach } from "bun:test";
-import { EventHub } from "../../src/events/event_hub";
+import { EventHub } from "prism-engine";
 
 let eventHub: EventHub;
 let topicName = "newTopic"

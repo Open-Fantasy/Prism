@@ -1,6 +1,6 @@
-import {describe, it, expect, beforeEach, test } from "bun:test";
-import { EventHub, Publisher } from "../../src/events/event_hub";
-import { PrismEvent } from "../../src/events/event";
+import {describe, it, expect, beforeEach } from "bun:test";
+import { EventHub, Publisher } from "prism-engine"
+import { PrismEvent } from "prism-engine"
 
 type TestType = {x: number;};
 type TestEventType = PrismEvent<TestType>;
