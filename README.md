@@ -1,5 +1,4 @@
-<p align="center"><img src="https://github.com/user-attachments/assets/586b3ec6-3b9b-4bb3-9897-e5edc51d2c1b" width="420px"/></p>
-
+<p align="center"><img src="https://github.com/user-attachments/assets/cc31802f-1785-4970-9f55-1bfa194ef259" width="420"/></p>
 <p align="center">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Open-Fantasy/Prism">
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Open-Fantasy/Prism/bun-test.yml?label=Unit%20Tests">
