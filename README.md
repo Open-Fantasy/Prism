@@ -8,9 +8,18 @@
 
 # Developing with Prism
 ## Installation
-`TODO`
+Prism is currently not published anywhere. 
+
+The easiest way to install it at this point in time is to clone the GitHub repository and run `bun install {PACKAGE_PATH}"`.
+
 ## Importing
-`TODO`
+
+### ESM Environments (Modern Browser Runtimes, Bun, Deno, Newer Versions of NodeJS, and others)
+`import * as Prism from "prism-engine"`
+
+### CJS Environments (Older Versions of NodeJS, Older Browser Runtimes, and others)
+`const Prism = require("prism-engine")`
+
 ## FAQ
 `TODO`
 
