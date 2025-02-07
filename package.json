@@ -26,12 +26,15 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@eslint/js": "^9.19.0",
     "@tsconfig/bun": "^1.0.7",
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
     "bun-types": "^1.2.0",
+    "eslint": "^9.19.0",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "typescript-eslint": "^8.23.0"
   },
   "scripts": {
     "bundle:debug:cjs": "bun build --outdir=./build/cjs/ --sourcemap=external --format=cjs ./src/index.ts",
@@ -40,6 +43,8 @@
     "bundle:production:esm": "bun build --outdir=./build/esm/ --sourcemap=external --format=esm --minify ./src/index.ts",
     "bundle:debug": "bun bundle:debug:cjs && bun bundle:debug:esm && bun tsc",
     "bundle:production": "bun bundle:production:cjs && bun bundle:production:esm && bun tsc",
+    "lint": "bunx eslint .",
+    "lint:fix": "bunx eslint . --fix",
     "debug": "bun run --inspect src/prism --cliMode",
     "cliDev": "bun run src/prism --cliMode",
     "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife",

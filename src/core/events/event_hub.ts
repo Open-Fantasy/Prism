@@ -1,4 +1,4 @@
-import { type EventCallback } from "./event";
+import { PrismEvent, type EventCallback } from "./event";
 
 /**
  * Creates a publisher and subscribers and stores a list of current topics
@@ -6,12 +6,12 @@ import { type EventCallback } from "./event";
  * TODO?: Should this have a topic delete function?
  */
 export class EventHub {
-    private _topics: Array<Topic<any>> = new Array<Topic<any>>;
+    private _topics: Array<Topic<PrismEvent<unknown>>> = [];
 
     /**
      * @returns readonly ref to private field _topics
      */
-    get topics(): ReadonlyArray<Topic<any>> {
+    get topics(): ReadonlyArray<Topic<PrismEvent<unknown>>> {
         return this._topics;
     }
 
@@ -21,19 +21,24 @@ export class EventHub {
      * @param topicName the name of the topic to get a publisher to
      * @returns the publisher for the topic
      */
-    advertise<TEvent>(topicName: string): Publisher<TEvent> {
+    advertise<TEvent extends PrismEvent<unknown>>(topicName: string): Publisher<TEvent> {
         /* check if topic exists */
-        for (let topicKey in this._topics) {
-            let topic = this._topics[topicKey];
+        let publisher : Publisher<TEvent> | null = null;
+        this._topics.forEach((topic: Topic<TEvent>) => {
             if (topic.name == topicName) {
-                return topic.publisher;
+                publisher = topic.publisher;
+                return; // Equivalent to break
             }
+        })
+        
+        if (publisher !== null) {
+            return publisher;
+        } else {
+            /* create new topic */
+            const newTopic = new Topic<PrismEvent<unknown>>(topicName); // We do not utilize the type here to support this._topics having an unknown event type.
+            this._topics.push(newTopic);
+            return newTopic.publisher;
         }
-
-        /* create new topic if needed */
-        let newTopic = new Topic<TEvent>(topicName);
-        this._topics.push(newTopic);
-        return newTopic.publisher;
     }
 
     /**
@@ -43,23 +48,26 @@ export class EventHub {
      * @param callback callback to set for the topic
      * @returns a subscriber for the topic
      */
-    subscribe<TEvent>(topicName: string, callback: EventCallback<TEvent>): Subscriber<TEvent> {
+    subscribe<TEvent extends PrismEvent<unknown>>(topicName: string, callback: EventCallback<unknown>): Subscriber<TEvent> {
         /* check if topic exists */
-        for (let topicKey in this._topics) {
-            let topic = this._topics[topicKey];
-            if (topicName == topic.name) {
-                let newSubscriber = new Subscriber<TEvent>(topic, callback);
-                topic.addSubscriber(newSubscriber);
-                return newSubscriber;
+        let subscriber : Subscriber<TEvent> | null = null;
+        this._topics.forEach((topic : Topic<TEvent>) => {
+            if (topic.name == topicName) {
+                subscriber= new Subscriber<TEvent>(topic, callback);
+                topic.addSubscriber(subscriber);
+                return; // Equivalent to break;
             }
-        } 
+        });
 
-        /* create new topic if needed */
-        let newTopic = new Topic<TEvent>(topicName);
-        this._topics.push(newTopic);
-        let newSubscriber = new Subscriber<TEvent>(newTopic, callback);
-        newTopic.addSubscriber(newSubscriber);
-        return newSubscriber;
+        if (subscriber === null) {
+            /* create new topic if needed */
+            const newTopic = new Topic<TEvent>(topicName);
+            this._topics.push(newTopic as Topic<PrismEvent<unknown>>);
+            subscriber = new Subscriber<TEvent>(newTopic, callback);
+            newTopic.addSubscriber(subscriber);
+        }
+
+        return subscriber;
     }
 }
 
@@ -68,7 +76,7 @@ export class EventHub {
  * There should generally be no need to ever instantiate a topic directly
  * @template TEvent the event type used, must extend PrismEvent
  */
-export class Topic<TEvent> {
+export class Topic<TEvent extends PrismEvent<unknown>> {
     readonly name: string;
     readonly publisher: Publisher<TEvent> = new Publisher<TEvent>(this);
     private _subscribers: Array<Subscriber<TEvent>> = new Array<Subscriber<TEvent>>;
@@ -101,7 +109,7 @@ export class Topic<TEvent> {
  * There should generally be no need to ever instantiate a topic directly
  * @template TEvent the event type used, must extend PrismEvent
  */
-export class Publisher<TEvent> {
+export class Publisher<TEvent extends PrismEvent<unknown>> {
     readonly topic: Topic<TEvent>
 
     /**
@@ -115,10 +123,10 @@ export class Publisher<TEvent> {
      * Publishes (emits) and event of its topic
      * @param data the event data
      */
-    publish(data: TEvent): void {
-        for (let subscriberKey in this.topic.subscribers) {
-            this.topic.subscribers[subscriberKey].callback(data);
-        }
+    publish(data: unknown): void {
+        this.topic.subscribers.forEach((subscriber : Subscriber<TEvent>) => {
+            subscriber.callback(data);
+        });
     }
 }
 
@@ -128,15 +136,15 @@ export class Publisher<TEvent> {
  * @template TEvent the event type used, must extend PrismEvent
  * TODO: unsubscribe function
  */
-export class Subscriber<Event> {
-    readonly topic: Topic<Event>;
-    readonly callback: EventCallback<Event>;
+export class Subscriber<TEvent extends PrismEvent<unknown>> {
+    readonly topic: Topic<TEvent>;
+    readonly callback: EventCallback<unknown>;
      
     /**
      * @param topic the topic for this subscription
      * @param callback the callback to use
      */
-    constructor(topic: Topic<Event>, callback: EventCallback<Event>) {
+    constructor(topic: Topic<TEvent>, callback: EventCallback<unknown>) {
         this.topic = topic;
         this.callback = callback;
     }

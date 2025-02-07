@@ -39,6 +39,12 @@ describe("EventHub Tests", () => {
         expect(subscriberA).not.toBe(subscriberB);
     });
 
+    it("subscribe twice to the same topic does not create a new topic", () => {
+        eventHub.subscribe(topicName, (_) => {});
+        eventHub.subscribe(topicName, (_) => {});
+        expect(eventHub.topics.length).toBe(1);
+    })
+
     it("multiple topics can be made though advertise", () => {
         let topicNameA = "topicNameA";
         let topicNameB = "topicNameB";
