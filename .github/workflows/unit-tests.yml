@@ -1,0 +1,25 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up and use DevContainer
+    - name: Run tests in DevContainer
+      uses: devcontainers/ci@v0.3
+      with:
+        runCmd: bun build:production && bun test
+        push: never
