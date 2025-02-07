@@ -1,4 +1,4 @@
-name: Run Bun Tests in DevContainer
+name: Unit Tests
 
 on:
   push:
