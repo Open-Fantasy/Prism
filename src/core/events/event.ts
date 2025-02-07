@@ -1,4 +1,4 @@
-import { deepFreeze } from "../utils/deepFreeze";
+import { deepFreeze } from "../../utils/deepFreeze";
 
 /**
  * GameEvents are used by the event system

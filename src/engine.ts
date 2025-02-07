@@ -1,6 +1,6 @@
-import { EventHub } from "./events/event_hub";
-import { Network } from "./network";
-import { RuntimeStats } from "./runtimeStats"
+import { EventHub } from "./core/events/event_hub";
+import { Network } from "./core/network";
+import { RuntimeStats } from "./utils/runtimeStats";
 
 /* tick rate in ticks per second */
 const LOGIC_FREQ = 30;

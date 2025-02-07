@@ -1,4 +1,4 @@
-import type { PrismSettings } from "./prism";
+import type { PrismSettings } from "../engine";
 
 /** collects RuntimeStats for the Prism game loop can be extended in the future
     requries setting `gatherStats` in the PrismSettings should probably be disabled in prod

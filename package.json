@@ -1,15 +1,23 @@
 {
-  "name": "prism",
+  "name": "prism-engine",
   "version": "0.0.1",
   "description": "Prism Engine",
-  "module": "prism",
+  "main": "./build/cjs/index.js",
+  "module": "./build/esm/index.js",
+  "types": "./build/types/index.d.ts",
   "files": [
-    "build/"
+    "./package.json",
+    "./build/cjs/index.js",
+    "./build/esm/index.js",
+    "./build/types/index.d.ts"
   ],
-  "type": "module",
   "exports": {
-    "types": "./build/prism.d.ts",
-    "import": "./build/dev/prism.js"
+    ".": {
+      "types": "./build/types/index.d.ts",
+      "require": "./build/cjs/index.js",
+      "import": "./build/esm/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -18,16 +26,23 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@tsconfig/bun": "^1.0.7",
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
     "bun-types": "^1.2.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"
   },
-
   "scripts": {
-    "debug":  "bun run --inspect src/prism --cliMode",
+    "bundle:debug:cjs": "bun build --outdir=./build/cjs/ --sourcemap=external --format=cjs ./src/index.ts",
+    "bundle:debug:esm": "bun build --outdir=./build/esm/ --sourcemap=external --format=esm ./src/index.ts",
+    "bundle:production:cjs": "bun build --outdir=./build/cjs/ --sourcemap=external --format=cjs --minify ./src/index.ts",
+    "bundle:production:esm": "bun build --outdir=./build/esm/ --sourcemap=external --format=esm --minify ./src/index.ts",
+    "bundle:debug": "bun bundle:debug:cjs && bun bundle:debug:esm && bun tsc",
+    "bundle:production": "bun bundle:production:cjs && bun bundle:production:esm && bun tsc",
+    "debug": "bun run --inspect src/prism --cliMode",
     "cliDev": "bun run src/prism --cliMode",
-    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife"
+    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife",
+    "serve": "bun run tests/test_utils/htmlserver/server.ts"
   }
 }
