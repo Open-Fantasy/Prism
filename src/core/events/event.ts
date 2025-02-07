@@ -9,7 +9,7 @@ export abstract class PrismEvent<T> {
     private readonly _data: unknown;
 
     constructor(data: T) {
-        this._data = deepFreeze(data as Object);
+        this._data = deepFreeze(data as object);
     }
 
     get data(): T {

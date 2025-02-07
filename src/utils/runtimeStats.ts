@@ -77,12 +77,12 @@ export class RuntimeStats {
      * @returns string with converted interval formated
      */
     humanReadableInterval(interval: number) {
-        let seconds = Math.floor(interval / 1000);
-        let minutes = Math.floor(seconds / 60);
-        let hours = Math.floor(minutes / 60);
+        const seconds = Math.floor(interval / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
 
-        let leftoverSeconds = seconds % 60;
-        let leftoverMinutes = minutes % 60;
+        const leftoverSeconds = seconds % 60;
+        const leftoverMinutes = minutes % 60;
         return `${hours}h:${leftoverMinutes}m:${leftoverSeconds}s`
     }
 

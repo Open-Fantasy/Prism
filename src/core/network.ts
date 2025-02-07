@@ -80,7 +80,7 @@ export class Network {
             console.log(msg);
         });
 
-        this._socket.onAny((event, data) => {
+        this._socket.onAny((event : string, data) => {
             this._netEventHub.advertise(event).publish(new NetworkMessage(event, data));
         });
         
@@ -124,13 +124,13 @@ export class Network {
         }
 
         if (this._priorityMessageQueue.length > 0) {
-            let msg: NetworkMessage = this._priorityMessageQueue.shift()!;
+            const msg: NetworkMessage = this._priorityMessageQueue.shift()!;
             this._socket?.emit(msg.verb, msg.data);
             return;
         }
 
         if (this._messageQueue.length > 0) {
-            let msg: NetworkMessage = this._messageQueue.shift()!;
+            const msg: NetworkMessage = this._messageQueue.shift()!;
             this._socket?.emit(msg.verb, msg.data);
             return;
         }
@@ -170,15 +170,15 @@ export class Network {
      * @param callback callback for the event
      * @returns a Subscriber object for the subscription
      */
-    subscribeNet<TEvent> (topicName: string, callback: EventCallback<TEvent>) {
-        return this._netEventHub.subscribe(topicName, callback);
+    subscribeNet<TEvent extends PrismEvent<unknown>> (topicName: string, callback: EventCallback<unknown>) {
+        return this._netEventHub.subscribe<TEvent>(topicName, callback);
     }
 
     /**
      * compatibility layer might remove later
      */
     sendMessage(verb: string, data: unknown) {
-        let msg = new NetworkMessage(verb, data);
+        const msg = new NetworkMessage(verb, data);
         this.publishNet(msg);
     }
 }

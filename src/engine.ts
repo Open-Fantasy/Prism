@@ -72,9 +72,9 @@ export class Prism {
         if (this.settings.enableNetwork) {
             this.network.start(this.settings.networkServer);
         }
-        let logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
-        let renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
-        this.gameLoop(logicTickInfo, renderTickInfo);
+        const logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick.bind(this));
+        const renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick.bind(this));
+        void this.gameLoop(logicTickInfo, renderTickInfo);
     }
 
     stop() {
@@ -94,17 +94,17 @@ export class Prism {
     private async gameLoop(logicTickInfo: TickInfo, renderTickInfo: TickInfo) {
         let delta = 0;
         while (this.enabled) {
-            let curTime: number = Date.now();
+            const curTime: number = Date.now();
             this.checkForTick(delta, logicTickInfo, this);
             this.checkForTick(delta, renderTickInfo, this);
 
-            let loopDiff = Date.now() - curTime;
-            let sleepTime = FASTER_TICK_TIME - loopDiff;
+            const loopDiff = Date.now() - curTime;
+            const sleepTime = FASTER_TICK_TIME - loopDiff;
             if (sleepTime <= 0) {
                 delta = loopDiff;
                 continue;
             }
-            let sleep = this.sleep(sleepTime);
+            const sleep = this.sleep(sleepTime);
             await sleep;
             delta = Date.now() - curTime;
         }
