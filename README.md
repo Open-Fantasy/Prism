@@ -26,7 +26,7 @@ The easiest way to install it at this point in time is to clone the GitHub repos
 # Contributing to Prism
 
 ## Contribution Guidelines
-We are always excited to see community contributions towards the Prism Engine, however, we need to make sure that the core ideologies within Prism are respected. As such, we ask all contributors keep the [Prism Design Philosphy](https://github.com/Open-Fantasy/Prism/blob/master/DesignPhilosophy.md) in mind when writing contributions.
+We are always excited to see community contributions towards the Prism Engine, however, we need to make sure that the core ideologies within Prism are respected. As such, we ask all contributors keep the guidelines set in [Contributing](https://github.com/Open-Fantasy/Prism/blob/master/CONTRIBUTING.md) in mind when writing contributions.
 
 
 ## Development Container
