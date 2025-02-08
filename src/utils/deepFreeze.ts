@@ -5,17 +5,16 @@
  * @returns if obj is a populated object returns a recursively frozen object making it entirely readonly
  */
 export function deepFreeze(obj: object): object {
-    const temp = obj as {[key: string]: unknown;}
-    if (!temp)
-        return Object.freeze({});
-    Object.freeze(temp);
+  const temp = obj as { [key: string]: unknown };
+  if (!temp) return Object.freeze({});
+  Object.freeze(temp);
 
-    Object.keys(temp).forEach( (key) => {
-        const value = temp[key];
-        if (value && typeof value === "object") {
-            deepFreeze(value);
-        }
-    });
+  Object.keys(temp).forEach((key) => {
+    const value = temp[key];
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  });
 
-    return obj;
+  return obj;
 }

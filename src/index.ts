@@ -4,8 +4,7 @@ This file acts as the entrypoint for the Bun Bundler and is responsible for conf
 Internal engine modules that do not need to be used by the library consumer should not be exported here.
 */
 
-
-export * from "./engine";
-export * from"./core/network";
-export * from "./core/events/event_hub";
-export * from "./core/events/event";
+export * from './engine';
+export * from './core/network';
+export * from './core/events/event_hub';
+export * from './core/events/event';

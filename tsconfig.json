@@ -7,12 +7,6 @@
     "emitDeclarationOnly": true,
     "verbatimModuleSyntax": true
   },
-  "include": [
-    "src/index.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "tests",
-    "build"
-  ]
+  "include": ["src/index.ts"],
+  "exclude": ["node_modules", "tests", "build"]
 }

@@ -2,6 +2,7 @@
 build/
 tests/browser_test/prism.js
 
+# Ignore VSCode Editor Settings
 .vscode/
 
 # Logs

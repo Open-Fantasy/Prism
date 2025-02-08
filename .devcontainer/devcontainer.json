@@ -8,8 +8,13 @@
   "customizations": {
       "vscode": {
           "extensions": [
-              "oven.bun-vscode"
-          ]
+              "oven.bun-vscode",
+              "esbenp.prettier-vscode",
+              "dbaeumer.vscode-eslint"
+          ],
+          "settings": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+          }
       }
   }
 }

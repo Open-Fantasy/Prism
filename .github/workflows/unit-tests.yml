@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the repository
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Set up and use DevContainer
-    - name: Run tests in DevContainer
-      uses: devcontainers/ci@v0.3
-      with:
-        runCmd: bun install && bun bundle:production && bun test
-        push: never
+      # Step 2: Set up and use DevContainer
+      - name: Run tests in DevContainer
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: bun install && bun bundle:production && bun test
+          push: never
