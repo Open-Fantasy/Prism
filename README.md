@@ -59,7 +59,7 @@ The execution order of all builds is roughly: Build CJS, Build ESM, Build Types.
 ### Unit Tests
 Unit Tests are configured through Buns integrated testing framework.
 
-These tests can be run locally via: `bun test`.
+These tests can be run locally via: `bun run test`.
 
 ### Network testing
 There is a simple socket.io echo server run with `bun run tests/test_utils/echoserver/echo_server.ts`. 
