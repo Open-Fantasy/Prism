@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { prism } from "./ui_test";
 import { BaseUIElement, ClickableUIElement } from "../../src/renderer/uiElements";
-import { PrismTick } from "../../src/events/prismTicks";
+import { PrismTick } from "../../src/core/events/prismTicks";
 
 class UiWithAnim extends ClickableUIElement {
     animDur: number = 2000;

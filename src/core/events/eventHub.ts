@@ -1,4 +1,3 @@
-import { readConfigFile } from "typescript";
 import { type EventCallback } from "./event";
 
 /**

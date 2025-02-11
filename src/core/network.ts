@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { PrismEvent, type EventCallback } from './events/event';
-import { EventHub } from './events/event_hub';
+import { EventHub } from './events/eventHub';
 
 const NETWORK_DELAYED_PACKAGE_DROP = 5000.0;
 const EXCESSIVE_MESSAGE_QUEUE_SIZE = 100;
@@ -61,25 +61,25 @@ export class Network {
       console.log(`Connected to server: ${serverAddr}`);
     });
 
-    this._socket.on('connect_error', (err) => {
+    this._socket.on('connect_error', (err: any) => {
       this._networkStatus = NetworkStatus.connectionError;
       console.log(`Connection error`);
       console.log(err);
     });
 
-    this._socket.on('disconnect', (msg) => {
+    this._socket.on('disconnect', (msg: any) => {
       this._networkStatus = NetworkStatus.disconnected;
       console.log(`Disconnected from server`);
       console.log(msg);
     });
 
-    this._socket.on('reconnecting', (msg) => {
+    this._socket.on('reconnecting', (msg: any) => {
       this._networkStatus = NetworkStatus.reconnecting;
       console.log(`Reconnecting to server`);
       console.log(msg);
     });
 
-    this._socket.onAny((event: string, data) => {
+    this._socket.onAny((event: string, data: unknown) => {
       this._netEventHub.advertise(event).publish(new NetworkMessage(event, data));
     });
 

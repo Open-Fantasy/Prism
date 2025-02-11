@@ -1,5 +1,4 @@
-import * as PRISM from "../../src/prism";
-import * as THREE from "three";
+import * as PRISM from "../../src/engine";
 import { setup3d } from "./setup3d";
 import { setupUI } from "./setupUI";
 

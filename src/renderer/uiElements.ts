@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { prism } from '../../tests/ui_test/ui_test';
-import { PrismTick } from '../events/prismTicks';
-import { Subscriber } from '../events/eventHub';
+import { PrismTick } from '../core/events/prismTicks';
+import { Subscriber } from '../core/events/eventHub';
 
 export class BaseUIElement extends THREE.Sprite {
     ndcPosition: THREE.Vector3 = new THREE.Vector3();

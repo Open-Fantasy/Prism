@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { WebGLRendererParameters } from "three";
+import { type WebGLRendererParameters } from "three";
 import { BaseUIElement, ClickableUIElement } from "./uiElements";
 
 export class Renderer {

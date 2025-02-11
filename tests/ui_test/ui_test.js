@@ -33,7 +33,7 @@
     prism: () => prism
   });
 
-  // src/events/eventHub.ts
+  // src/core/events/eventHub.ts
   class EventHub {
     _topics = new Array;
     get topics() {
@@ -2716,7 +2716,7 @@
 
   // src/utils/deepFreeze.ts
   function deepFreeze(obj) {
-    let temp = obj;
+    const temp = obj;
     if (!temp)
       return Object.freeze({});
     Object.freeze(temp);
@@ -2729,7 +2729,7 @@
     return obj;
   }
 
-  // src/events/event.ts
+  // src/core/events/event.ts
   class PrismEvent {
     timestamp = Date.now();
     _data;
@@ -2741,7 +2741,7 @@
     }
   }
 
-  // src/network.ts
+  // src/core/network.ts
   var NETWORK_DELAYED_PACKAGE_DROP = 5000;
   var EXCESSIVE_MESSAGE_QUEUE_SIZE = 100;
   class NetworkMessage extends PrismEvent {
@@ -2814,12 +2814,12 @@
         return;
       }
       if (this._priorityMessageQueue.length > 0) {
-        let msg = this._priorityMessageQueue.shift();
+        const msg = this._priorityMessageQueue.shift();
         this._socket?.emit(msg.verb, msg.data);
         return;
       }
       if (this._messageQueue.length > 0) {
-        let msg = this._messageQueue.shift();
+        const msg = this._messageQueue.shift();
         this._socket?.emit(msg.verb, msg.data);
         return;
       }
@@ -2844,7 +2844,7 @@
       return this._netEventHub.subscribe(topicName, callback);
     }
     sendMessage(verb, data) {
-      let msg = new NetworkMessage(verb, data);
+      const msg = new NetworkMessage(verb, data);
       this.publishNet(msg);
     }
   }
@@ -26624,7 +26624,7 @@ void main() {
     }
   }
 
-  // src/runtimeStats.ts
+  // src/utils/runtimeStats.ts
   class RuntimeStats {
     lastLogicTick = 0;
     avgLogicTick = 0;
@@ -26674,11 +26674,11 @@ void main() {
       this.renderTickCount++;
     }
     humanReadableInterval(interval) {
-      let seconds = Math.floor(interval / 1000);
-      let minutes = Math.floor(seconds / 60);
-      let hours = Math.floor(minutes / 60);
-      let leftoverSeconds = seconds % 60;
-      let leftoverMinutes = minutes % 60;
+      const seconds = Math.floor(interval / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const leftoverSeconds = seconds % 60;
+      const leftoverMinutes = minutes % 60;
       return `${hours}h:${leftoverMinutes}m:${leftoverSeconds}s`;
     }
     runtimeStatsCliInit(settings) {
@@ -26704,11 +26704,11 @@ void main() {
     }
   }
 
-  // src/events/prismTicks.ts
+  // src/core/events/prismTicks.ts
   class PrismTick extends PrismEvent {
   }
 
-  // src/prism.ts
+  // src/engine.ts
   var LOGIC_FREQ = 30;
   var RENDER_FREQ = 60;
   var LOGIC_TICK_TIME = Math.floor(1 / LOGIC_FREQ * 1000);

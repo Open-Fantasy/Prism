@@ -41,7 +41,7 @@ describe('Publisher Tests', () => {
   });
 
   it('publisher works with one subscriber', () => {
-    eventHub.subscribe(topicName, testCallback);
+    eventHub.subscribe<TestEventType>(topicName, testCallback);
     let data = new TestEvent(testData);
     publisher.publish(data);
     expect(testArr.length).toBe(1);

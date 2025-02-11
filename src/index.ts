@@ -6,5 +6,5 @@ Internal engine modules that do not need to be used by the library consumer shou
 
 export * from './engine';
 export * from './core/network';
-export * from './core/events/event_hub';
+export * from './core/events/eventHub';
 export * from './core/events/event';

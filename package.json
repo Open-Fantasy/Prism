@@ -21,24 +21,24 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "prettier": "^3.4.2"
+    "prettier": "^3.5.0"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@eslint/js": "^9.19.0",
+    "@eslint/js": "^9.20.0",
     "@tsconfig/bun": "^1.0.7",
     "@types/socket.io": "^3.0.2",
     "@types/socket.io-client": "^3.0.0",
     "@types/three": "^0.173.0",
-    "bun-types": "^1.2.0",
-    "eslint": "^9.19.0",
+    "bun-types": "^1.2.2",
+    "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "typescript-eslint": "^8.23.0",
+    "typescript-eslint": "^8.24.0",
     "three": "^0.173.0"
   },
   "scripts": {
@@ -48,11 +48,12 @@
     "bundle:production:esm": "bun build --outdir=./build/esm/ --sourcemap=external --format=esm --minify ./src/index.ts",
     "bundle:debug": "bun bundle:debug:cjs && bun bundle:debug:esm && bun tsc",
     "bundle:production": "bun bundle:production:cjs && bun bundle:production:esm && bun tsc",
+    "clean": "rm -r ./build",
+    "test" : "bun test tests/unit_tests",
     "lint": "bunx eslint .",
     "lint:fix": "bunx eslint . --fix",
     "debug": "bun run --inspect src/prism --cliMode",
     "cliDev": "bun run src/prism --cliMode",
-    "browserTest": "bun build src/prism.ts --outfile=tests/browser_test/prism.js --target=browser --format iife",
     "serve": "bun run tests/test_utils/htmlserver/server.ts",
     "uiTest": "bun build tests/ui_test/ui_test.ts --outfile=tests/ui_test/ui_test.js --target=browser --format iife"
   }
