@@ -1,8 +1,9 @@
 import { NumberNodeUniform } from "three/src/renderers/common/nodes/NodeUniform.js";
-import { EventHub } from "./events/event_hub";
+import { EventHub } from "./events/eventHub";
 import { Network } from "./network";
 import {Renderer} from "./renderer/renderer";
 import { RuntimeStats } from "./runtimeStats"
+import { PrismTick } from "./events/prismTicks";
 
 /* tick rate in ticks per second */
 const LOGIC_FREQ = 30;
@@ -13,8 +14,8 @@ const RENDER_TICK_TIME = Math.floor((1 / RENDER_FREQ) * 1000);
 /* gets the faster of the two tick rates, this is used in the main loop */
 const FASTER_TICK_TIME = LOGIC_TICK_TIME > RENDER_TICK_TIME ? RENDER_TICK_TIME : LOGIC_TICK_TIME;
 
-const TICK_GRACE_THRESHOLD = 1.05;  // the amount of grace a tick should get for triggering i.e trigger the tick within 5% of the target rate
-const TICK_WARNING_THRESHOLD = 1.25; // the amount a tick is allowed go over its target rate before printing a warning
+const TICK_GRACE_THRESHOLD = 1.25;  // the amount of grace a tick should get for triggering i.e trigger the tick within 5% of the target rate
+const TICK_WARNING_THRESHOLD = 5; // the amount a tick is allowed go over its target rate before printing a warning
 
 /**
  * settings for the prism engine on init
@@ -148,7 +149,7 @@ export class Prism {
             prism.runtimeStats.updateLogic(delta);
         if (prism.settings.enableNetwork)
             prism.network.update(delta);
-        prism.prismEvents.advertise("logicTick").publish(delta);
+        prism.prismEvents.advertise<PrismTick>("logicTick").publish(new PrismTick(delta));
     }
 
     /**
@@ -162,6 +163,6 @@ export class Prism {
         if (prism.settings.gatherStats)
             prism.runtimeStats.updateRender(delta);
         prism.renderer.renderFrame();
-        prism.prismEvents.advertise("renderTick").publish(delta);
+        prism.prismEvents.advertise<PrismTick>("renderTick").publish(new PrismTick(delta));
     }
 }

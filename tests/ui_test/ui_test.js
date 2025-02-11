@@ -1,5 +1,22 @@
 (() => {
   var __defProp = Object.defineProperty;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __moduleCache = /* @__PURE__ */ new WeakMap;
+  var __toCommonJS = (from) => {
+    var entry = __moduleCache.get(from), desc;
+    if (entry)
+      return entry;
+    entry = __defProp({}, "__esModule", { value: true });
+    if (from && typeof from === "object" || typeof from === "function")
+      __getOwnPropNames(from).map((key) => !__hasOwnProp.call(entry, key) && __defProp(entry, key, {
+        get: () => from[key],
+        enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+      }));
+    __moduleCache.set(from, entry);
+    return entry;
+  };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, {
@@ -10,7 +27,13 @@
       });
   };
 
-  // src/events/event_hub.ts
+  // tests/ui_test/ui_test.ts
+  var exports_ui_test = {};
+  __export(exports_ui_test, {
+    prism: () => prism
+  });
+
+  // src/events/eventHub.ts
   class EventHub {
     _topics = new Array;
     get topics() {
@@ -57,6 +80,11 @@
     addSubscriber(subscriber) {
       this._subscribers.push(subscriber);
     }
+    removeSubscriber(subscriber) {
+      this._subscribers = this._subscribers.filter((sub) => {
+        ;
+      });
+    }
   }
 
   class Publisher {
@@ -77,6 +105,9 @@
     constructor(topic, callback) {
       this.topic = topic;
       this.callback = callback;
+    }
+    unsubscribe() {
+      this.topic.removeSubscriber(this);
     }
   }
 
@@ -10468,6 +10499,427 @@
       return data;
     }
   }
+
+  class InterleavedBuffer {
+    constructor(array, stride) {
+      this.isInterleavedBuffer = true;
+      this.array = array;
+      this.stride = stride;
+      this.count = array !== undefined ? array.length / stride : 0;
+      this.usage = StaticDrawUsage;
+      this.updateRanges = [];
+      this.version = 0;
+      this.uuid = generateUUID();
+    }
+    onUploadCallback() {
+    }
+    set needsUpdate(value2) {
+      if (value2 === true)
+        this.version++;
+    }
+    setUsage(value2) {
+      this.usage = value2;
+      return this;
+    }
+    addUpdateRange(start, count) {
+      this.updateRanges.push({ start, count });
+    }
+    clearUpdateRanges() {
+      this.updateRanges.length = 0;
+    }
+    copy(source) {
+      this.array = new source.array.constructor(source.array);
+      this.count = source.count;
+      this.stride = source.stride;
+      this.usage = source.usage;
+      return this;
+    }
+    copyAt(index1, attribute, index2) {
+      index1 *= this.stride;
+      index2 *= attribute.stride;
+      for (let i = 0, l = this.stride;i < l; i++) {
+        this.array[index1 + i] = attribute.array[index2 + i];
+      }
+      return this;
+    }
+    set(value2, offset = 0) {
+      this.array.set(value2, offset);
+      return this;
+    }
+    clone(data) {
+      if (data.arrayBuffers === undefined) {
+        data.arrayBuffers = {};
+      }
+      if (this.array.buffer._uuid === undefined) {
+        this.array.buffer._uuid = generateUUID();
+      }
+      if (data.arrayBuffers[this.array.buffer._uuid] === undefined) {
+        data.arrayBuffers[this.array.buffer._uuid] = this.array.slice(0).buffer;
+      }
+      const array = new this.array.constructor(data.arrayBuffers[this.array.buffer._uuid]);
+      const ib = new this.constructor(array, this.stride);
+      ib.setUsage(this.usage);
+      return ib;
+    }
+    onUpload(callback) {
+      this.onUploadCallback = callback;
+      return this;
+    }
+    toJSON(data) {
+      if (data.arrayBuffers === undefined) {
+        data.arrayBuffers = {};
+      }
+      if (this.array.buffer._uuid === undefined) {
+        this.array.buffer._uuid = generateUUID();
+      }
+      if (data.arrayBuffers[this.array.buffer._uuid] === undefined) {
+        data.arrayBuffers[this.array.buffer._uuid] = Array.from(new Uint32Array(this.array.buffer));
+      }
+      return {
+        uuid: this.uuid,
+        buffer: this.array.buffer._uuid,
+        type: this.array.constructor.name,
+        stride: this.stride
+      };
+    }
+  }
+  var _vector$7 = /* @__PURE__ */ new Vector3;
+
+  class InterleavedBufferAttribute {
+    constructor(interleavedBuffer, itemSize, offset, normalized = false) {
+      this.isInterleavedBufferAttribute = true;
+      this.name = "";
+      this.data = interleavedBuffer;
+      this.itemSize = itemSize;
+      this.offset = offset;
+      this.normalized = normalized;
+    }
+    get count() {
+      return this.data.count;
+    }
+    get array() {
+      return this.data.array;
+    }
+    set needsUpdate(value2) {
+      this.data.needsUpdate = value2;
+    }
+    applyMatrix4(m) {
+      for (let i = 0, l = this.data.count;i < l; i++) {
+        _vector$7.fromBufferAttribute(this, i);
+        _vector$7.applyMatrix4(m);
+        this.setXYZ(i, _vector$7.x, _vector$7.y, _vector$7.z);
+      }
+      return this;
+    }
+    applyNormalMatrix(m) {
+      for (let i = 0, l = this.count;i < l; i++) {
+        _vector$7.fromBufferAttribute(this, i);
+        _vector$7.applyNormalMatrix(m);
+        this.setXYZ(i, _vector$7.x, _vector$7.y, _vector$7.z);
+      }
+      return this;
+    }
+    transformDirection(m) {
+      for (let i = 0, l = this.count;i < l; i++) {
+        _vector$7.fromBufferAttribute(this, i);
+        _vector$7.transformDirection(m);
+        this.setXYZ(i, _vector$7.x, _vector$7.y, _vector$7.z);
+      }
+      return this;
+    }
+    getComponent(index, component) {
+      let value2 = this.array[index * this.data.stride + this.offset + component];
+      if (this.normalized)
+        value2 = denormalize(value2, this.array);
+      return value2;
+    }
+    setComponent(index, component, value2) {
+      if (this.normalized)
+        value2 = normalize(value2, this.array);
+      this.data.array[index * this.data.stride + this.offset + component] = value2;
+      return this;
+    }
+    setX(index, x) {
+      if (this.normalized)
+        x = normalize(x, this.array);
+      this.data.array[index * this.data.stride + this.offset] = x;
+      return this;
+    }
+    setY(index, y) {
+      if (this.normalized)
+        y = normalize(y, this.array);
+      this.data.array[index * this.data.stride + this.offset + 1] = y;
+      return this;
+    }
+    setZ(index, z) {
+      if (this.normalized)
+        z = normalize(z, this.array);
+      this.data.array[index * this.data.stride + this.offset + 2] = z;
+      return this;
+    }
+    setW(index, w) {
+      if (this.normalized)
+        w = normalize(w, this.array);
+      this.data.array[index * this.data.stride + this.offset + 3] = w;
+      return this;
+    }
+    getX(index) {
+      let x = this.data.array[index * this.data.stride + this.offset];
+      if (this.normalized)
+        x = denormalize(x, this.array);
+      return x;
+    }
+    getY(index) {
+      let y = this.data.array[index * this.data.stride + this.offset + 1];
+      if (this.normalized)
+        y = denormalize(y, this.array);
+      return y;
+    }
+    getZ(index) {
+      let z = this.data.array[index * this.data.stride + this.offset + 2];
+      if (this.normalized)
+        z = denormalize(z, this.array);
+      return z;
+    }
+    getW(index) {
+      let w = this.data.array[index * this.data.stride + this.offset + 3];
+      if (this.normalized)
+        w = denormalize(w, this.array);
+      return w;
+    }
+    setXY(index, x, y) {
+      index = index * this.data.stride + this.offset;
+      if (this.normalized) {
+        x = normalize(x, this.array);
+        y = normalize(y, this.array);
+      }
+      this.data.array[index + 0] = x;
+      this.data.array[index + 1] = y;
+      return this;
+    }
+    setXYZ(index, x, y, z) {
+      index = index * this.data.stride + this.offset;
+      if (this.normalized) {
+        x = normalize(x, this.array);
+        y = normalize(y, this.array);
+        z = normalize(z, this.array);
+      }
+      this.data.array[index + 0] = x;
+      this.data.array[index + 1] = y;
+      this.data.array[index + 2] = z;
+      return this;
+    }
+    setXYZW(index, x, y, z, w) {
+      index = index * this.data.stride + this.offset;
+      if (this.normalized) {
+        x = normalize(x, this.array);
+        y = normalize(y, this.array);
+        z = normalize(z, this.array);
+        w = normalize(w, this.array);
+      }
+      this.data.array[index + 0] = x;
+      this.data.array[index + 1] = y;
+      this.data.array[index + 2] = z;
+      this.data.array[index + 3] = w;
+      return this;
+    }
+    clone(data) {
+      if (data === undefined) {
+        console.log("THREE.InterleavedBufferAttribute.clone(): Cloning an interleaved buffer attribute will de-interleave buffer data.");
+        const array = [];
+        for (let i = 0;i < this.count; i++) {
+          const index = i * this.data.stride + this.offset;
+          for (let j = 0;j < this.itemSize; j++) {
+            array.push(this.data.array[index + j]);
+          }
+        }
+        return new BufferAttribute(new this.array.constructor(array), this.itemSize, this.normalized);
+      } else {
+        if (data.interleavedBuffers === undefined) {
+          data.interleavedBuffers = {};
+        }
+        if (data.interleavedBuffers[this.data.uuid] === undefined) {
+          data.interleavedBuffers[this.data.uuid] = this.data.clone(data);
+        }
+        return new InterleavedBufferAttribute(data.interleavedBuffers[this.data.uuid], this.itemSize, this.offset, this.normalized);
+      }
+    }
+    toJSON(data) {
+      if (data === undefined) {
+        console.log("THREE.InterleavedBufferAttribute.toJSON(): Serializing an interleaved buffer attribute will de-interleave buffer data.");
+        const array = [];
+        for (let i = 0;i < this.count; i++) {
+          const index = i * this.data.stride + this.offset;
+          for (let j = 0;j < this.itemSize; j++) {
+            array.push(this.data.array[index + j]);
+          }
+        }
+        return {
+          itemSize: this.itemSize,
+          type: this.array.constructor.name,
+          array,
+          normalized: this.normalized
+        };
+      } else {
+        if (data.interleavedBuffers === undefined) {
+          data.interleavedBuffers = {};
+        }
+        if (data.interleavedBuffers[this.data.uuid] === undefined) {
+          data.interleavedBuffers[this.data.uuid] = this.data.toJSON(data);
+        }
+        return {
+          isInterleavedBufferAttribute: true,
+          itemSize: this.itemSize,
+          data: this.data.uuid,
+          offset: this.offset,
+          normalized: this.normalized
+        };
+      }
+    }
+  }
+
+  class SpriteMaterial extends Material {
+    constructor(parameters) {
+      super();
+      this.isSpriteMaterial = true;
+      this.type = "SpriteMaterial";
+      this.color = new Color(16777215);
+      this.map = null;
+      this.alphaMap = null;
+      this.rotation = 0;
+      this.sizeAttenuation = true;
+      this.transparent = true;
+      this.fog = true;
+      this.setValues(parameters);
+    }
+    copy(source) {
+      super.copy(source);
+      this.color.copy(source.color);
+      this.map = source.map;
+      this.alphaMap = source.alphaMap;
+      this.rotation = source.rotation;
+      this.sizeAttenuation = source.sizeAttenuation;
+      this.fog = source.fog;
+      return this;
+    }
+  }
+  var _geometry;
+  var _intersectPoint = /* @__PURE__ */ new Vector3;
+  var _worldScale = /* @__PURE__ */ new Vector3;
+  var _mvPosition = /* @__PURE__ */ new Vector3;
+  var _alignedPosition = /* @__PURE__ */ new Vector2;
+  var _rotatedPosition = /* @__PURE__ */ new Vector2;
+  var _viewWorldMatrix = /* @__PURE__ */ new Matrix4;
+  var _vA = /* @__PURE__ */ new Vector3;
+  var _vB = /* @__PURE__ */ new Vector3;
+  var _vC = /* @__PURE__ */ new Vector3;
+  var _uvA = /* @__PURE__ */ new Vector2;
+  var _uvB = /* @__PURE__ */ new Vector2;
+  var _uvC = /* @__PURE__ */ new Vector2;
+
+  class Sprite extends Object3D {
+    constructor(material = new SpriteMaterial) {
+      super();
+      this.isSprite = true;
+      this.type = "Sprite";
+      if (_geometry === undefined) {
+        _geometry = new BufferGeometry;
+        const float32Array = new Float32Array([
+          -0.5,
+          -0.5,
+          0,
+          0,
+          0,
+          0.5,
+          -0.5,
+          0,
+          1,
+          0,
+          0.5,
+          0.5,
+          0,
+          1,
+          1,
+          -0.5,
+          0.5,
+          0,
+          0,
+          1
+        ]);
+        const interleavedBuffer = new InterleavedBuffer(float32Array, 5);
+        _geometry.setIndex([0, 1, 2, 0, 2, 3]);
+        _geometry.setAttribute("position", new InterleavedBufferAttribute(interleavedBuffer, 3, 0, false));
+        _geometry.setAttribute("uv", new InterleavedBufferAttribute(interleavedBuffer, 2, 3, false));
+      }
+      this.geometry = _geometry;
+      this.material = material;
+      this.center = new Vector2(0.5, 0.5);
+    }
+    raycast(raycaster, intersects) {
+      if (raycaster.camera === null) {
+        console.error('THREE.Sprite: "Raycaster.camera" needs to be set in order to raycast against sprites.');
+      }
+      _worldScale.setFromMatrixScale(this.matrixWorld);
+      _viewWorldMatrix.copy(raycaster.camera.matrixWorld);
+      this.modelViewMatrix.multiplyMatrices(raycaster.camera.matrixWorldInverse, this.matrixWorld);
+      _mvPosition.setFromMatrixPosition(this.modelViewMatrix);
+      if (raycaster.camera.isPerspectiveCamera && this.material.sizeAttenuation === false) {
+        _worldScale.multiplyScalar(-_mvPosition.z);
+      }
+      const rotation = this.material.rotation;
+      let sin, cos;
+      if (rotation !== 0) {
+        cos = Math.cos(rotation);
+        sin = Math.sin(rotation);
+      }
+      const center = this.center;
+      transformVertex(_vA.set(-0.5, -0.5, 0), _mvPosition, center, _worldScale, sin, cos);
+      transformVertex(_vB.set(0.5, -0.5, 0), _mvPosition, center, _worldScale, sin, cos);
+      transformVertex(_vC.set(0.5, 0.5, 0), _mvPosition, center, _worldScale, sin, cos);
+      _uvA.set(0, 0);
+      _uvB.set(1, 0);
+      _uvC.set(1, 1);
+      let intersect = raycaster.ray.intersectTriangle(_vA, _vB, _vC, false, _intersectPoint);
+      if (intersect === null) {
+        transformVertex(_vB.set(-0.5, 0.5, 0), _mvPosition, center, _worldScale, sin, cos);
+        _uvB.set(0, 1);
+        intersect = raycaster.ray.intersectTriangle(_vA, _vC, _vB, false, _intersectPoint);
+        if (intersect === null) {
+          return;
+        }
+      }
+      const distance = raycaster.ray.origin.distanceTo(_intersectPoint);
+      if (distance < raycaster.near || distance > raycaster.far)
+        return;
+      intersects.push({
+        distance,
+        point: _intersectPoint.clone(),
+        uv: Triangle.getInterpolation(_intersectPoint, _vA, _vB, _vC, _uvA, _uvB, _uvC, new Vector2),
+        face: null,
+        object: this
+      });
+    }
+    copy(source, recursive) {
+      super.copy(source, recursive);
+      if (source.center !== undefined)
+        this.center.copy(source.center);
+      this.material = source.material;
+      return this;
+    }
+  }
+  function transformVertex(vertexPosition, mvPosition, center, scale, sin, cos) {
+    _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale);
+    if (sin !== undefined) {
+      _rotatedPosition.x = cos * _alignedPosition.x - sin * _alignedPosition.y;
+      _rotatedPosition.y = sin * _alignedPosition.x + cos * _alignedPosition.y;
+    } else {
+      _rotatedPosition.copy(_alignedPosition);
+    }
+    vertexPosition.copy(mvPosition);
+    vertexPosition.x += _rotatedPosition.x;
+    vertexPosition.y += _rotatedPosition.y;
+    vertexPosition.applyMatrix4(_viewWorldMatrix);
+  }
   var _vector1 = /* @__PURE__ */ new Vector3;
   var _vector2 = /* @__PURE__ */ new Vector3;
   var _normalMatrix = /* @__PURE__ */ new Matrix3;
@@ -12253,6 +12705,75 @@
     ]
   ];
   var _controlInterpolantsResultBuffer = new Float32Array(1);
+  var _matrix = /* @__PURE__ */ new Matrix4;
+
+  class Raycaster {
+    constructor(origin, direction, near = 0, far = Infinity) {
+      this.ray = new Ray(origin, direction);
+      this.near = near;
+      this.far = far;
+      this.camera = null;
+      this.layers = new Layers;
+      this.params = {
+        Mesh: {},
+        Line: { threshold: 1 },
+        LOD: {},
+        Points: { threshold: 1 },
+        Sprite: {}
+      };
+    }
+    set(origin, direction) {
+      this.ray.set(origin, direction);
+    }
+    setFromCamera(coords, camera) {
+      if (camera.isPerspectiveCamera) {
+        this.ray.origin.setFromMatrixPosition(camera.matrixWorld);
+        this.ray.direction.set(coords.x, coords.y, 0.5).unproject(camera).sub(this.ray.origin).normalize();
+        this.camera = camera;
+      } else if (camera.isOrthographicCamera) {
+        this.ray.origin.set(coords.x, coords.y, (camera.near + camera.far) / (camera.near - camera.far)).unproject(camera);
+        this.ray.direction.set(0, 0, -1).transformDirection(camera.matrixWorld);
+        this.camera = camera;
+      } else {
+        console.error("THREE.Raycaster: Unsupported camera type: " + camera.type);
+      }
+    }
+    setFromXRController(controller) {
+      _matrix.identity().extractRotation(controller.matrixWorld);
+      this.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+      this.ray.direction.set(0, 0, -1).applyMatrix4(_matrix);
+      return this;
+    }
+    intersectObject(object, recursive = true, intersects = []) {
+      intersect(object, this, intersects, recursive);
+      intersects.sort(ascSort);
+      return intersects;
+    }
+    intersectObjects(objects, recursive = true, intersects = []) {
+      for (let i = 0, l = objects.length;i < l; i++) {
+        intersect(objects[i], this, intersects, recursive);
+      }
+      intersects.sort(ascSort);
+      return intersects;
+    }
+  }
+  function ascSort(a, b) {
+    return a.distance - b.distance;
+  }
+  function intersect(object, raycaster, intersects, recursive) {
+    let propagate = true;
+    if (object.layers.test(raycaster.layers)) {
+      const result = object.raycast(raycaster, intersects);
+      if (result === false)
+        propagate = false;
+    }
+    if (propagate === true && recursive === true) {
+      const children = object.children;
+      for (let i = 0, l = children.length;i < l; i++) {
+        intersect(children[i], raycaster, intersects, true);
+      }
+    }
+  }
   var _v1 = /* @__PURE__ */ new Vector3;
   var _v2 = /* @__PURE__ */ new Vector3;
   var _v3 = /* @__PURE__ */ new Vector3;
@@ -26009,6 +26530,9 @@ void main() {
     worldCamera;
     uiCamera;
     renderer;
+    raycaster = new Raycaster;
+    mouse = new Vector2;
+    hoveredUiObj;
     width = 0;
     height = 0;
     init(windowDim, fov2, canvas) {
@@ -26016,18 +26540,20 @@ void main() {
       if (canvas)
         params.canvas = canvas;
       this.renderer = new WebGLRenderer(params);
-      this.renderer.setSize(windowDim.width, windowDim.height);
+      this.setCanvasSize(windowDim.width, windowDim.height);
       this.renderer.autoClear = false;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFShadowMap;
       if (!canvas)
         document.body.appendChild(this.renderer.domElement);
-      this.width = windowDim.width;
-      this.height = windowDim.height;
       this.worldScene = new Scene;
       this.worldCamera = new PerspectiveCamera(fov2, windowDim.width / windowDim.height, 0.1, 1000);
       this.uiScene = new Scene;
-      this.uiCamera = new OrthographicCamera(0, windowDim.width, 0, windowDim.height, 0, 1);
+      this.uiCamera = new OrthographicCamera(-(this.width / 2), this.width / 2, this.height / 2, -(this.height / 2));
+      this.uiCamera.layers.enableAll();
+      this.uiCamera.position.set(0, 0, 10);
+      window.addEventListener("click", this.clickEvent.bind(this));
+      window.addEventListener("mousemove", this.hoverEvent.bind(this));
     }
     renderFrame() {
       this.renderer.render(this.worldScene, this.worldCamera);
@@ -26044,6 +26570,57 @@ void main() {
     }
     removeUiObject(obj) {
       this.uiScene.remove(obj);
+    }
+    setCanvasSize(width, height) {
+      this.renderer.setSize(width, height);
+      this.width = width;
+      this.height = height;
+    }
+    ndcToThreeCoords(ndcX, ndcY) {
+      return new Vector3(ndcX * (this.uiCamera.right - this.uiCamera.left) / 2, ndcY * (this.uiCamera.top - this.uiCamera.bottom) / 2, 0);
+    }
+    clickEvent(hover) {
+      const canvasBox = this.renderer.domElement.getBoundingClientRect();
+      this.mouse.x = (hover.clientX - canvasBox.left) / canvasBox.width * 2 - 1;
+      this.mouse.y = -((hover.clientY - canvasBox.top) / canvasBox.height) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.uiCamera);
+      this.raycaster.layers.set(1);
+      let intersects = this.raycaster.intersectObjects(this.uiScene.children, true);
+      if (intersects.length != 0) {
+        console.log(intersects[0]);
+        let clicked = intersects[0].object;
+        if (clicked.onClick)
+          clicked.onClick();
+        return;
+      }
+      this.raycaster.layers.set(0);
+      this.raycaster.setFromCamera(this.mouse, this.worldCamera);
+      intersects = this.raycaster.intersectObjects(this.worldScene.children, true);
+      console.log(intersects);
+    }
+    hoverEvent(click) {
+      const canvasBox = this.renderer.domElement.getBoundingClientRect();
+      this.mouse.x = (click.clientX - canvasBox.left) / canvasBox.width * 2 - 1;
+      this.mouse.y = -((click.clientY - canvasBox.top) / canvasBox.height) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.uiCamera);
+      this.raycaster.layers.set(1);
+      let intersects = this.raycaster.intersectObjects(this.uiScene.children, true);
+      if (intersects.length == 0) {
+        if (this.hoveredUiObj?.offHover)
+          this.hoveredUiObj.offHover();
+        this.hoveredUiObj = undefined;
+        return;
+      }
+      if (intersects.length != 0) {
+        let hovered = intersects[0].object;
+        if (this.hoveredUiObj === hovered)
+          return;
+        if (this.hoveredUiObj?.offHover)
+          this.hoveredUiObj.offHover();
+        if (hovered.onHover)
+          hovered.onHover();
+        this.hoveredUiObj = hovered;
+      }
     }
   }
 
@@ -26127,14 +26704,18 @@ void main() {
     }
   }
 
+  // src/events/prismTicks.ts
+  class PrismTick extends PrismEvent {
+  }
+
   // src/prism.ts
   var LOGIC_FREQ = 30;
   var RENDER_FREQ = 60;
   var LOGIC_TICK_TIME = Math.floor(1 / LOGIC_FREQ * 1000);
   var RENDER_TICK_TIME = Math.floor(1 / RENDER_FREQ * 1000);
   var FASTER_TICK_TIME = LOGIC_TICK_TIME > RENDER_TICK_TIME ? RENDER_TICK_TIME : LOGIC_TICK_TIME;
-  var TICK_GRACE_THRESHOLD = 1.05;
-  var TICK_WARNING_THRESHOLD = 1.25;
+  var TICK_GRACE_THRESHOLD = 1.25;
+  var TICK_WARNING_THRESHOLD = 5;
 
   class PrismSettings {
     enableNetwork = false;
@@ -26219,7 +26800,7 @@ void main() {
         prism.runtimeStats.updateLogic(delta);
       if (prism.settings.enableNetwork)
         prism.network.update(delta);
-      prism.prismEvents.advertise("logicTick").publish(delta);
+      prism.prismEvents.advertise("logicTick").publish(new PrismTick(delta));
     }
     renderTick(prism, delta) {
       if (delta > RENDER_TICK_TIME * TICK_WARNING_THRESHOLD)
@@ -26227,44 +26808,195 @@ void main() {
       if (prism.settings.gatherStats)
         prism.runtimeStats.updateRender(delta);
       prism.renderer.renderFrame();
-      prism.prismEvents.advertise("renderTick").publish(delta);
+      prism.prismEvents.advertise("renderTick").publish(new PrismTick(delta));
     }
+  }
+
+  // tests/ui_test/setup3d.ts
+  function setup3d() {
+    let testCubeGeo = new BoxGeometry;
+    let testCubeMat = new MeshStandardMaterial({ color: 65280 });
+    let testCube = new Mesh(testCubeGeo, testCubeMat);
+    testCube.position.set(0, 0, -30);
+    testCube.castShadow = true;
+    testCube.receiveShadow = true;
+    prism.renderer.addWorldObject(testCube);
+    let lightDir = new DirectionalLight(16777215, 0.5);
+    lightDir.position.set(0, 0, 10);
+    lightDir.target.position.copy(testCube.position);
+    lightDir.castShadow = true;
+    let helper = new DirectionalLightHelper(lightDir, 10, new Color(255));
+    prism.renderer.addWorldObject(lightDir);
+    prism.renderer.addWorldObject(lightDir.target);
+    prism.renderer.addWorldObject(helper);
+    let lightAmbi = new AmbientLight(4210752, 1);
+    prism.renderer.addWorldObject(lightAmbi);
+    let groundGeometry = new PlaneGeometry(10, 10);
+    let groundMaterial = new MeshStandardMaterial({ color: 16711680 });
+    let ground = new Mesh(groundGeometry, groundMaterial);
+    ground.position.set(0, 0, -30.5);
+    ground.receiveShadow = true;
+    prism.renderer.addWorldObject(ground);
+    prism.prismEvents.subscribe("renderTick", rotateCube);
+    function rotateCube(delta) {
+      testCube.rotateX(0.01);
+      testCube.rotateY(0.01);
+      helper.update();
+    }
+  }
+
+  // src/renderer/uiElements.ts
+  class BaseUIElement extends Sprite {
+    ndcPosition = new Vector3;
+    ndcScale = new Vector3;
+    aspectRatio = 1;
+    animSub;
+    onHover;
+    offHover;
+    constructor(spriteMaterial) {
+      super(spriteMaterial);
+      this.layers.set(0);
+    }
+    setPosition(ndcX, ndcY) {
+      this.ndcPosition.set(ndcX, ndcY, 0);
+      let pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
+      pos.x += this.scale.x / 2;
+      pos.y -= this.scale.y / 2;
+      this.position.copy(pos);
+    }
+    setScaleFixed(ndcWidth, ndcHeight) {
+      this.ndcScale.set(ndcWidth, ndcHeight, 1);
+      let scale = prism.renderer.ndcToThreeCoords(ndcWidth, ndcHeight);
+      this.scale.copy(scale);
+    }
+    setScaleWidth(ndcWidth) {
+      let ndcHeight = ndcWidth / this.aspectRatio;
+      this.setScaleFixed(ndcWidth, ndcHeight);
+    }
+    setScaleHeight(ndcHeight) {
+      let ndcWidth = ndcHeight / this.aspectRatio;
+      this.setScaleFixed(ndcWidth, ndcHeight);
+    }
+    setAspectRatio(ratio) {
+      this.aspectRatio = ratio * prism.renderer.height / prism.renderer.width;
+    }
+    animate(animation) {
+      if (this.animSub !== undefined)
+        return;
+      this.animSub = prism.prismEvents.subscribe("renderTick", (delta) => {
+        if (animation(delta)) {
+          this.animSub.unsubscribe();
+          this.animSub = undefined;
+        }
+      });
+    }
+    forceStopAnimation() {
+      if (this.animSub === undefined)
+        return;
+      this.animSub.unsubscribe();
+      this.animSub = undefined;
+    }
+  }
+
+  class ClickableUIElement extends BaseUIElement {
+    clickLayer = 0;
+    onClick;
+    constructor(spriteMaterial) {
+      super(spriteMaterial);
+      this.layers.set(1);
+    }
+    setClickLayer(clickLayer) {
+      this.clickLayer = clickLayer;
+      this.position.setZ(clickLayer);
+    }
+    setPosition(ndcX, ndcY) {
+      this.ndcPosition.set(ndcX, ndcY, this.clickLayer);
+      let pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
+      pos.x += this.scale.x / 2;
+      pos.y -= this.scale.y / 2;
+      this.position.copy(pos);
+    }
+  }
+
+  // tests/ui_test/setupUI.ts
+  class UiWithAnim extends ClickableUIElement {
+    animDur = 2000;
+    curDur = this.animDur;
+    animation(delta) {
+      this.curDur -= delta.data;
+      if (this.curDur <= 0) {
+        console.log("Animation Done!");
+        this.material.color.setHex(255);
+        this.curDur = this.animDur;
+        return true;
+      }
+      let color = {
+        h: 0,
+        s: 0,
+        l: 0
+      };
+      this.material.color.getHSL(color);
+      this.material.color.setHSL(color.h + 0.02, color.s, color.l);
+      return false;
+    }
+  }
+  function setupUI() {
+    const testSpriteMatA = new SpriteMaterial({ color: 255 });
+    const spriteA = new UiWithAnim(testSpriteMatA);
+    spriteA.setAspectRatio(1);
+    spriteA.setScaleWidth(0.1);
+    spriteA.setPosition(-1, 1);
+    spriteA.onClick = () => {
+      console.log("Running Animation");
+      spriteA.material.color.setHex(255);
+      spriteA.animate(spriteA.animation.bind(spriteA));
+    };
+    spriteA.onHover = () => {
+      spriteA.material.color.setHex(0);
+      console.log("Hovered Sprite A!");
+    };
+    spriteA.offHover = () => {
+      spriteA.forceStopAnimation();
+      console.log("Off Sprite A!");
+    };
+    prism.renderer.addUiObject(spriteA);
+    const testSpriteMatB = new SpriteMaterial({ color: 65280 });
+    const spriteB = new BaseUIElement(testSpriteMatB);
+    spriteB.setAspectRatio(1);
+    spriteB.setScaleWidth(0.1);
+    spriteB.setPosition(-1, -1 + spriteB.ndcScale.y);
+    prism.renderer.addUiObject(spriteB);
+    const testSpriteMatC = new SpriteMaterial({ color: 16711680 });
+    const spriteC = new BaseUIElement(testSpriteMatC);
+    spriteC.setAspectRatio(1);
+    spriteC.setScaleWidth(0.1);
+    spriteC.setPosition(1 - spriteC.ndcScale.x, 1);
+    prism.renderer.addUiObject(spriteC);
+    const testSpriteMatD = new SpriteMaterial({ color: 65535 });
+    const spriteD = new BaseUIElement(testSpriteMatD);
+    spriteD.setAspectRatio(1);
+    spriteD.setScaleWidth(0.1);
+    spriteD.setPosition(1 - spriteD.ndcScale.x, -1 + spriteD.ndcScale.y);
+    prism.renderer.addUiObject(spriteD);
+    const testSpriteMatE = new SpriteMaterial({ color: 16711935 });
+    const spriteE = new ClickableUIElement(testSpriteMatE);
+    spriteE.setAspectRatio(1);
+    spriteE.setScaleWidth(0.1);
+    spriteE.setPosition(-0.95, 0.95);
+    spriteE.onClick = () => {
+      console.log("Clicked Sprite E!");
+    };
+    spriteE.setClickLayer(1);
+    prism.renderer.addUiObject(spriteE);
   }
 
   // tests/ui_test/ui_test.ts
   var prismSettings = new PrismSettings;
   prismSettings.gatherStats = true;
-  prismSettings.windowDim = { width: window.innerWidth, height: window.innerHeight };
+  prismSettings.windowDim = { width: window.innerWidth - 50, height: window.innerHeight - 100 };
   var prism = new Prism(prismSettings);
   globalThis.prism = prism;
   prism.start();
-  var testCubeGeo = new BoxGeometry;
-  var testCubeMat = new MeshStandardMaterial({ color: 65280 });
-  var testCube = new Mesh(testCubeGeo, testCubeMat);
-  testCube.position.set(0, 0, -30);
-  testCube.castShadow = true;
-  testCube.receiveShadow = true;
-  prism.renderer.addWorldObject(testCube);
-  var lightDir = new DirectionalLight(16777215, 0.5);
-  lightDir.position.set(0, 0, 10);
-  lightDir.target.position.copy(testCube.position);
-  lightDir.castShadow = true;
-  var helper = new DirectionalLightHelper(lightDir, 10, new Color(255));
-  prism.renderer.addWorldObject(lightDir);
-  prism.renderer.addWorldObject(lightDir.target);
-  prism.renderer.addWorldObject(helper);
-  var lightAmbi = new AmbientLight(4210752, 1);
-  prism.renderer.addWorldObject(lightAmbi);
-  var groundGeometry = new PlaneGeometry(10, 10);
-  var groundMaterial = new MeshStandardMaterial({ color: 16711680 });
-  var ground = new Mesh(groundGeometry, groundMaterial);
-  ground.position.set(0, 0, -30.5);
-  ground.receiveShadow = true;
-  prism.renderer.addWorldObject(ground);
-  prism.prismEvents.subscribe("renderTick", rotateCube);
-  function rotateCube(delta) {
-    testCube.rotateX(0.01);
-    testCube.rotateY(0.01);
-    helper.update();
-  }
+  setup3d();
+  setupUI();
 })();
