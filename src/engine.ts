@@ -81,7 +81,7 @@ export class Prism {
     this.renderer.init(this.settings.windowDim, 45);
     const logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
     const renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
-    this.gameLoop(logicTickInfo, renderTickInfo);
+    this.gameLoop(logicTickInfo, renderTickInfo).catch();
   }
 
   stop() {

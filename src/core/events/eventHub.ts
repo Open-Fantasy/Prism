@@ -23,10 +23,9 @@ export class EventHub {
    */
   advertise<TEvent>(topicName: string): Publisher<TEvent> {
     /* check if topic exists */
-    for (const topicKey in this._topics) {
-      const topic = this._topics[topicKey];
+    for (const topic of this._topics) {
       if (topic.name == topicName) {
-        return topic.publisher;
+        return topic.publisher as Publisher<TEvent>;
       }
     }
 
@@ -45,8 +44,7 @@ export class EventHub {
    */
   subscribe<TEvent>(topicName: string, callback: EventCallback<TEvent>): Subscriber<TEvent> {
     /* check if topic exists */
-    for (const topicKey in this._topics) {
-      const topic = this._topics[topicKey];
+    for (const topic of this._topics) {
       if (topicName == topic.name) {
         const newSubscriber = new Subscriber<TEvent>(topic, callback);
         topic.addSubscriber(newSubscriber);
@@ -97,7 +95,7 @@ export class Topic<TEvent> {
 
   removeSubscriber(subscriber: Subscriber<TEvent>) {
     this._subscribers = this._subscribers.filter((sub) => {
-      sub !== subscriber;
+      return sub !== subscriber;
     });
   }
 }
@@ -122,8 +120,8 @@ export class Publisher<TEvent> {
    * @param data the event data
    */
   publish(data: TEvent): void {
-    for (const subscriberKey in this.topic.subscribers) {
-      this.topic.subscribers[subscriberKey].callback(data);
+    for (const subscriber of this.topic.subscribers) {
+      subscriber.callback(data);
     }
   }
 }

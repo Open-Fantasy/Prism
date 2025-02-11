@@ -40,28 +40,26 @@
       return this._topics;
     }
     advertise(topicName) {
-      for (let topicKey in this._topics) {
-        let topic = this._topics[topicKey];
+      for (const topic of this._topics) {
         if (topic.name == topicName) {
           return topic.publisher;
         }
       }
-      let newTopic = new Topic(topicName);
+      const newTopic = new Topic(topicName);
       this._topics.push(newTopic);
       return newTopic.publisher;
     }
     subscribe(topicName, callback) {
-      for (let topicKey in this._topics) {
-        let topic = this._topics[topicKey];
+      for (const topic of this._topics) {
         if (topicName == topic.name) {
-          let newSubscriber2 = new Subscriber(topic, callback);
+          const newSubscriber2 = new Subscriber(topic, callback);
           topic.addSubscriber(newSubscriber2);
           return newSubscriber2;
         }
       }
-      let newTopic = new Topic(topicName);
+      const newTopic = new Topic(topicName);
       this._topics.push(newTopic);
-      let newSubscriber = new Subscriber(newTopic, callback);
+      const newSubscriber = new Subscriber(newTopic, callback);
       newTopic.addSubscriber(newSubscriber);
       return newSubscriber;
     }
@@ -82,7 +80,7 @@
     }
     removeSubscriber(subscriber) {
       this._subscribers = this._subscribers.filter((sub) => {
-        ;
+        return sub !== subscriber;
       });
     }
   }
@@ -93,8 +91,8 @@
       this.topic = topic;
     }
     publish(data) {
-      for (let subscriberKey in this.topic.subscribers) {
-        this.topic.subscribers[subscriberKey].callback(data);
+      for (const subscriber of this.topic.subscribers) {
+        subscriber.callback(data);
       }
     }
   }
@@ -26536,7 +26534,7 @@ void main() {
     width = 0;
     height = 0;
     init(windowDim, fov2, canvas) {
-      let params = {};
+      const params = {};
       if (canvas)
         params.canvas = canvas;
       this.renderer = new WebGLRenderer(params);
@@ -26588,7 +26586,7 @@ void main() {
       let intersects = this.raycaster.intersectObjects(this.uiScene.children, true);
       if (intersects.length != 0) {
         console.log(intersects[0]);
-        let clicked = intersects[0].object;
+        const clicked = intersects[0].object;
         if (clicked.onClick)
           clicked.onClick();
         return;
@@ -26604,7 +26602,7 @@ void main() {
       this.mouse.y = -((click.clientY - canvasBox.top) / canvasBox.height) * 2 + 1;
       this.raycaster.setFromCamera(this.mouse, this.uiCamera);
       this.raycaster.layers.set(1);
-      let intersects = this.raycaster.intersectObjects(this.uiScene.children, true);
+      const intersects = this.raycaster.intersectObjects(this.uiScene.children, true);
       if (intersects.length == 0) {
         if (this.hoveredUiObj?.offHover)
           this.hoveredUiObj.offHover();
@@ -26612,7 +26610,7 @@ void main() {
         return;
       }
       if (intersects.length != 0) {
-        let hovered = intersects[0].object;
+        const hovered = intersects[0].object;
         if (this.hoveredUiObj === hovered)
           return;
         if (this.hoveredUiObj?.offHover)
@@ -26755,9 +26753,9 @@ void main() {
         this.network.start(this.settings.networkServer);
       }
       this.renderer.init(this.settings.windowDim, 45);
-      let logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
-      let renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
-      this.gameLoop(logicTickInfo, renderTickInfo);
+      const logicTickInfo = new TickInfo(LOGIC_TICK_TIME, this.logicTick);
+      const renderTickInfo = new TickInfo(RENDER_TICK_TIME, this.renderTick);
+      this.gameLoop(logicTickInfo, renderTickInfo).catch();
     }
     stop() {
       this.enabled = false;
@@ -26765,16 +26763,16 @@ void main() {
     async gameLoop(logicTickInfo, renderTickInfo) {
       let delta = 0;
       while (this.enabled) {
-        let curTime = Date.now();
+        const curTime = Date.now();
         this.checkForTick(delta, logicTickInfo, this);
         this.checkForTick(delta, renderTickInfo, this);
-        let loopDiff = Date.now() - curTime;
-        let sleepTime = FASTER_TICK_TIME - loopDiff;
+        const loopDiff = Date.now() - curTime;
+        const sleepTime = FASTER_TICK_TIME - loopDiff;
         if (sleepTime <= 0) {
           delta = loopDiff;
           continue;
         }
-        let sleep = this.sleep(sleepTime);
+        const sleep = this.sleep(sleepTime);
         await sleep;
         delta = Date.now() - curTime;
       }
@@ -26859,22 +26857,22 @@ void main() {
     }
     setPosition(ndcX, ndcY) {
       this.ndcPosition.set(ndcX, ndcY, 0);
-      let pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
+      const pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
       pos.x += this.scale.x / 2;
       pos.y -= this.scale.y / 2;
       this.position.copy(pos);
     }
     setScaleFixed(ndcWidth, ndcHeight) {
       this.ndcScale.set(ndcWidth, ndcHeight, 1);
-      let scale = prism.renderer.ndcToThreeCoords(ndcWidth, ndcHeight);
+      const scale = prism.renderer.ndcToThreeCoords(ndcWidth, ndcHeight);
       this.scale.copy(scale);
     }
     setScaleWidth(ndcWidth) {
-      let ndcHeight = ndcWidth / this.aspectRatio;
+      const ndcHeight = ndcWidth / this.aspectRatio;
       this.setScaleFixed(ndcWidth, ndcHeight);
     }
     setScaleHeight(ndcHeight) {
-      let ndcWidth = ndcHeight / this.aspectRatio;
+      const ndcWidth = ndcHeight / this.aspectRatio;
       this.setScaleFixed(ndcWidth, ndcHeight);
     }
     setAspectRatio(ratio) {
@@ -26911,7 +26909,7 @@ void main() {
     }
     setPosition(ndcX, ndcY) {
       this.ndcPosition.set(ndcX, ndcY, this.clickLayer);
-      let pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
+      const pos = prism.renderer.ndcToThreeCoords(ndcX, ndcY);
       pos.x += this.scale.x / 2;
       pos.y -= this.scale.y / 2;
       this.position.copy(pos);
